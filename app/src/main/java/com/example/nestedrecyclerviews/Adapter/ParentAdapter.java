@@ -1,15 +1,16 @@
 package com.example.nestedrecyclerviews.Adapter;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nestedrecyclerviews.Item;
@@ -61,6 +62,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ParentView
     }
 
     class ParentViewHolder extends RecyclerView.ViewHolder {
+        private ConstraintLayout mainLayout;
         private TextView heading;
         private RecyclerView recyclerView;
         private Item item;
@@ -69,32 +71,41 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ParentView
 
         ParentViewHolder(@NonNull View itemView, final ChildAdapterListener listener) {
             super(itemView);
-            heading = itemView.findViewById(R.id.child_textview);
+            mainLayout = itemView.findViewById(R.id.main_layout);
+            heading = itemView.findViewById(R.id.episodeName);
             recyclerView = itemView.findViewById(R.id.child_recyclerview);
             this.listener = listener;
             recyclerView.setAdapter(subItemAdapter);
             recyclerView.setVisibility(View.GONE);
 
-            heading.setOnClickListener(new View.OnClickListener() {
+            mainLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Toast.makeText(view.getContext(), "Child is Clicked!", Toast.LENGTH_LONG).show();
+                    Log.d("Just_Check", "" + getAdapterPosition() + " ");
                     item.setFlag(!item.getFlag());
+                    setRecyclerView(item.getFlag());
                     listener.onChildStateChanged(getAdapterPosition() == previousPosition ? -1 : previousPosition);
-                    setRecyclerViewVisibilty(item.getFlag());
                     previousPosition = getAdapterPosition();
-                    ;
                 }
             });
         }
 
-        public void setRecyclerViewVisibilty(boolean shouldShowView) {
+        void setRecyclerView(Boolean shouldShowView) {
+//            if(subItemAdapter.getList() == null || subItemAdapter.getList().size() == 0){
+//                subItemAdapter.setData(item.getSubItemList());
+//            }else{
+////                subItemAdapter.clearList();
+////                subItemAdapter.setData(new ArrayList<SubItem>());
+//            }
+//            subItemAdapter.notifyDataSetChanged();
             recyclerView.setVisibility(shouldShowView ? View.VISIBLE : View.GONE);
         }
 
         void setData(Item item) {
             this.item = item;
-            heading.setText(item.getItemTitle());
-            subItemAdapter.setData(item.getSubItemList());
+//            heading.setText(item.getItemTitle());
+           subItemAdapter.setData(item.getSubItemList());
         }
     }
 }
